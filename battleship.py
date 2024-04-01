@@ -84,7 +84,7 @@ def checkforwin():
 
     player1_ships_left = sum(row.count("1") for row in Player1_A[0].values())  # Count occurences of "1" in Player 1s board
     player2_ships_left = sum(row.count("1") for row in Player2_A[0].values())  # Count occurences of"1" in Player 2s board
-
+    #print("Player 1 ships:",player1_ships_left,"Player 2 ships", player2_ships_left)
     if player1_ships_left == 0:
         print("Player 2 wins! All of Player 1's ships have been sunk.")
         return True
@@ -117,7 +117,6 @@ def startgame(player1name, player2name):
                     column_name = peginput[0].upper() # Letter column (ex: E)
                     row_number = int(peginput[-1]) - 1 # The row num (ex: 7)
                     Player1_B[0][column_name][row_number] = "3" # SHOW THE MISSILE ON A BOARD B MISSED
-                    Player2_A[0][column_name][row_number] = "3" # MISSED (showing on player 2 board)
                     print("MISSILE FIRED!!!")
                     time.sleep(.5)
 
@@ -133,6 +132,7 @@ def startgame(player1name, player2name):
                         continue
                     else:
                         print("\nITS A MISS!")
+                        Player2_A[0][column_name][row_number] = "3" # MISSED (showing on player 2 board)
 
                         print("Your updated moves:")
                         print(printboard(Player1_B))
@@ -160,7 +160,6 @@ def startgame(player1name, player2name):
                     column_name = peginput[0].upper() # Letter column (ex: E)
                     row_number = int(peginput[-1]) - 1 # The row num (ex: 7)
                     Player2_B[0][column_name][row_number] = "3" # SHOW THE MISSILE ON A BOARD B MISSED
-                    Player1_A[0][column_name][row_number] = "3" # MISSED (showing on player 2 board)
                     print("MISSILE FIRED!!!")
                     time.sleep(.5)
 
@@ -176,6 +175,7 @@ def startgame(player1name, player2name):
                         continue
                     else:
                         print("\nITS A MISS!")
+                        Player1_A[0][column_name][row_number] = "3" # MISSED (showing on player 2 board)
 
                         print("Your updated moves:")
                         print(printboard(Player2_B))
@@ -190,8 +190,10 @@ def startgame(player1name, player2name):
 
         
         i += 1
+
         if checkforwin():  # Call the checkforwin() function after each player's turn
             break
+    exit()
 
 def createboard():
     #BEGIN PLAYER 1:
