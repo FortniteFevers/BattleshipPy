@@ -86,10 +86,10 @@ def checkforwin():
     player2_ships_left = sum(row.count("1") for row in Player2_A[0].values())  # Count occurences of"1" in Player 2s board
     #print("Player 1 ships:",player1_ships_left,"Player 2 ships", player2_ships_left)
     if player1_ships_left == 0:
-        print("Player 2 wins! All of Player 1's ships have been sunk.")
+        print("\nPlayer 2 wins! All of Player 1's ships have been sunk.\nCONGRATS PLAYER 2!!!")
         return True
     elif player2_ships_left == 0:
-        print("Player 1 wins! All of Player 2's ships have been sunk.")
+        print("\nPlayer 1 wins! All of Player 2's ships have been sunk.\nCONGRATS PLAYER 1!!!")
         return True
     else:
         return False
@@ -101,10 +101,14 @@ def startgame(player1name, player2name):
     while True: # Cycle through player 1 and player 2 endlessly and run checkforwin function until one player wins
         clear() # Could remove for debugging purposes
         print("REMINDER: (⬜) is a MISSED missile and (🟥) is a HIT missile. (🟨) is showing a ship on YOUR board.")
+        print("")
 
         if i % 2 == 0:
             player = "1" # Number is even, player 1 turn
-            print(f'<<< Your move, {player1name} >>>\n') # PLAYER A TURN
+            print(f'<<< Your move, {player1name} (Player 1) >>>\n') # PLAYER A TURN
+            print("Type YES when ready.")
+            ask = input(">> ")
+            print("")
             print("YOUR BOARD:")
             print(printboard(Player1_A))
             print("YOUR MOVES:")
@@ -116,6 +120,10 @@ def startgame(player1name, player2name):
                 try:
                     column_name = peginput[0].upper() # Letter column (ex: E)
                     row_number = int(peginput[-1]) - 1 # The row num (ex: 7)
+                    if Player1_B[0][column_name][row_number] == "3" or Player1_B[0][column_name][row_number] == "2":
+                        print("You already fired a missile here! Try again.")
+                        continue
+
                     Player1_B[0][column_name][row_number] = "3" # SHOW THE MISSILE ON A BOARD B MISSED
                     print("MISSILE FIRED!!!")
                     time.sleep(.5)
@@ -124,6 +132,8 @@ def startgame(player1name, player2name):
                         Player1_B[0][column_name][row_number] = "2" # Indicates that theres a ship there
                         Player2_A[0][column_name][row_number] = "2" # HIT MISSILE
                         print("\nITS A HIT!")
+                        if checkforwin():  # Call the checkforwin() function after each player's turn
+                            break
 
                         print("\nYour updated moves:")
                         print(printboard(Player1_B))
@@ -147,7 +157,10 @@ def startgame(player1name, player2name):
 
         else:
             player = "2" # Number is odd, player 2 turn
-            print(f'<<< Your move, {player2name} >>>\n')
+            print(f'<<< Your move, {player2name} (Player 2) >>>\n')
+            print("Type YES when ready.")
+            ask = input(">> ")
+            print("")
             print("YOUR BOARD:")
             print(printboard(Player2_A))
             print("YOUR MOVES:")
@@ -159,6 +172,10 @@ def startgame(player1name, player2name):
                 try:
                     column_name = peginput[0].upper() # Letter column (ex: E)
                     row_number = int(peginput[-1]) - 1 # The row num (ex: 7)
+                    if Player2_B[0][column_name][row_number] == "3" or Player2_B[0][column_name][row_number] == "2":
+                        print("You already fired a missile here! Try again.")
+                        continue
+
                     Player2_B[0][column_name][row_number] = "3" # SHOW THE MISSILE ON A BOARD B MISSED
                     print("MISSILE FIRED!!!")
                     time.sleep(.5)
@@ -166,10 +183,12 @@ def startgame(player1name, player2name):
                     if Player1_A[0][column_name][row_number] == "1": # Checks to see if piece is already occupied. If it is, let the user know.
                         Player2_B[0][column_name][row_number] = "2" # Indicates that theres a ship there
                         Player1_A[0][column_name][row_number] = "2" # HIT MISSILE
+                        if checkforwin():  # Call the checkforwin() function after each player's turn
+                            break
                         print("\nITS A HIT!")
 
                         print("\nYour updated moves:")
-                        print(printboard(Player1_B))
+                        print(printboard(Player2_B))
 
                         print("Enter another input to keep your streak going!\n")
                         continue
@@ -197,7 +216,12 @@ def startgame(player1name, player2name):
 
 def createboard():
     #BEGIN PLAYER 1:
-    print("Player 1, let's make your board.\n")
+    print("Player 1, let's make your board. Type YES when ready.\n")
+    ask = input(">> ")
+    if ask == "DEBUG_CreateBoard": # Used to debug the startgame function
+        startgame("player1", "player2")
+
+    print("")
     print(printboard(Player1_A))
     for i in range(2): # 4-PEG (x2)
         while True:
@@ -222,14 +246,14 @@ def createboard():
             Player1_A[0][column_name][row_number] = "1"
             try:
                 if move == "U":
-                    if column_name == "D" or column_name == "C" or column_name == "B" or column_name == "A":
+                    if column_name == "C" or column_name == "B" or column_name == "A":
                         print("Ship does not place here! Please chose a new starting point or orientation.")
                         continue
                     Player1_A[0][alphabet[colnum-1]][row_number] = "1"
                     Player1_A[0][alphabet[colnum-2]][row_number] = "1"
                     Player1_A[0][alphabet[colnum-3]][row_number] = "1"
                 elif move == "D":
-                    if column_name == "F" or column_name == "G" or column_name == "H" or column_name == "I":
+                    if column_name == "G" or column_name == "H" or column_name == "I":
                         print("Ship does not place here! Please chose a new starting point or orientation.")
                         continue
                     Player1_A[0][alphabet[colnum+1]][row_number] = "1"
@@ -258,7 +282,7 @@ def createboard():
                 print("Ship does not place here! Please chose a new starting point or orientation.")
                 continue
 
-    for i in range(3): # 3-PEG (3x)
+    for i in range(2): # 3-PEG (3x)
         while True:
             print(f"Enter your starting point for a 3-PEG ship ({i+1}/3)")
             peginput = input(">> ")
@@ -281,13 +305,13 @@ def createboard():
             Player1_A[0][column_name][row_number] = "1"
             try:
                 if move == "U":
-                    if column_name == "C" or column_name == "B" or column_name == "A":
+                    if column_name == "B" or column_name == "A":
                         print("Ship does not place here! Please chose a new starting point or orientation.")
                         continue
                     Player1_A[0][alphabet[colnum-1]][row_number] = "1"
                     Player1_A[0][alphabet[colnum-2]][row_number] = "1"
                 elif move == "D":
-                    if column_name == "G" or column_name == "H" or column_name == "I":
+                    if column_name == "H" or column_name == "I":
                         print("Ship does not place here! Please chose a new starting point or orientation.")
                         continue
                     Player1_A[0][alphabet[colnum+1]][row_number] = "1"
@@ -336,12 +360,12 @@ def createboard():
             Player1_A[0][column_name][row_number] = "1"
             try:
                 if move == "U":
-                    if column_name == "B" or column_name == "A":
+                    if column_name == "A":
                         print("Ship does not place here! Please chose a new starting point or orientation.")
                         continue
                     Player1_A[0][alphabet[colnum-1]][row_number] = "1"
                 elif move == "D":
-                    if column_name == "H" or column_name == "I":
+                    if column_name == "I":
                         print("Ship does not place here! Please chose a new starting point or orientation.")
                         continue
                     Player1_A[0][alphabet[colnum+1]][row_number] = "1"
@@ -393,7 +417,9 @@ def createboard():
     SWITCH TO PLAYER 2
     """
 
-    print("Player 2, let's make your board.\n")
+    print("Player 2, let's make your board. Type YES when ready.\n")
+    ask = input(">> ")
+    print("")
     print(printboard(Player2_A))
     for i in range(2): # 4-PEG (x2)
         while True:
@@ -419,14 +445,14 @@ def createboard():
             Player2_A[0][column_name][row_number] = "1"
             try:
                 if move == "U":
-                    if column_name == "D" or column_name == "C" or column_name == "B" or column_name == "A":
+                    if column_name == "C" or column_name == "B" or column_name == "A":
                         print("Ship does not place here! Please chose a new starting point or orientation.")
                         continue
                     Player2_A[0][alphabet[colnum-1]][row_number] = "1"
                     Player2_A[0][alphabet[colnum-2]][row_number] = "1"
                     Player2_A[0][alphabet[colnum-3]][row_number] = "1"
                 elif move == "D":
-                    if column_name == "F" or column_name == "G" or column_name == "H" or column_name == "I":
+                    if column_name == "G" or column_name == "H" or column_name == "I":
                         print("Ship does not place here! Please chose a new starting point or orientation.")
                         continue
                     Player2_A[0][alphabet[colnum+1]][row_number] = "1"
@@ -455,7 +481,7 @@ def createboard():
                 print("Ship does not place here! Please chose a new starting point or orientation.")
                 continue
 
-    for i in range(3): # 3-PEG (3x)
+    for i in range(2): # 3-PEG (3x)
         while True:
             print(f"Enter your starting point for a 3-PEG ship ({i+1}/3)")
             peginput = input(">> ")
@@ -479,13 +505,13 @@ def createboard():
             Player2_A[0][column_name][row_number] = "1"
             try:
                 if move == "U":
-                    if column_name == "C" or column_name == "B" or column_name == "A":
+                    if column_name == "B" or column_name == "A":
                         print("Ship does not place here! Please chose a new starting point or orientation.")
                         continue
                     Player2_A[0][alphabet[colnum-1]][row_number] = "1"
                     Player2_A[0][alphabet[colnum-2]][row_number] = "1"
                 elif move == "D":
-                    if column_name == "G" or column_name == "H" or column_name == "I":
+                    if column_name == "H" or column_name == "I":
                         print("Ship does not place here! Please chose a new starting point or orientation.")
                         continue
                     Player2_A[0][alphabet[colnum+1]][row_number] = "1"
@@ -535,12 +561,12 @@ def createboard():
             Player2_A[0][column_name][row_number] = "1"
             try:
                 if move == "U":
-                    if column_name == "B" or column_name == "A":
+                    if column_name == "A":
                         print("Ship does not place here! Please chose a new starting point or orientation.")
                         continue
                     Player2_A[0][alphabet[colnum-1]][row_number] = "1"
                 elif move == "D":
-                    if column_name == "H" or column_name == "I":
+                    if column_name == "I":
                         print("Ship does not place here! Please chose a new starting point or orientation.")
                         continue
                     Player2_A[0][alphabet[colnum+1]][row_number] = "1"
@@ -611,12 +637,12 @@ Directions:
 - Before we start the game, both players will create their game boards.
 - Player 1 ({player1name}) will go first. Player 2 ({player2name}) will go second.
 - The game consists of two boards, 9x9. You will have 8 ships total.
-- EACH PLAYER WILL HAVE:  2x FOUR SHIPS, 3x THREE SHIPS, 1x TWO SHIPS, 2x ONE SHIP
+- EACH PLAYER WILL HAVE:  2x FOUR SHIPS, 2x THREE SHIPS, 1x TWO SHIPS, 2x ONE SHIP
 - You can place your ships anywhere on the board. They can not be touching eachother. They can not be diagonal. They can not be overlapping another ship.
 - Have fun :)
         """
     )
-    time.sleep(3)
+    time.sleep(5)
     print("Player 1, MAKE YOUR BOARD!!!")
     time.sleep(1)
     clear()
